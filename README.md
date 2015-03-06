@@ -14,9 +14,9 @@ rosrun turtlesim turtlesim_node
 ```
 
 #Material e documentação
--Tutorial
--Survey: Integração de sistemas robóticos com programação orientada a agentes
--Slides de apoio ao survey
+- Tutorial
+- Survey: Integração de sistemas robóticos com programação orientada a agentes
+- Slides de apoio ao survey
  
 
 
