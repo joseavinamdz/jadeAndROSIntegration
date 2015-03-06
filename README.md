@@ -5,13 +5,13 @@ Autor: Pedro Mathias Nakibar
 #Observações
 Além deste repositório é necessário ter o *ros e o *ros-bridgesuite instalados.
 Para usufruir das ferramentas, apenas inicie o rosbridgesuite:
-´´´bash
+```bash
 roslaunch rosbridge_server rosbridge_websocket.launch
-´´´
+```
 E o turtlesim node:
-´´´bash
+```bash
 rosrun turtlesim turtlesim_node
-´´´
+```
 
 #Material e documentação
 -Tutorial
