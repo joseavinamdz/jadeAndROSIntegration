@@ -19,19 +19,19 @@ rosrun turtlesim turtlesim_node
 - [Slides de apoio ao survey](http://pt.slideshare.net/pedronakibar/apresentao-integrao-ros-e-jade)
 
 ##Diagramas
-Diagram de sequência:
+###Diagram de sequência:
 ![Diagrama de sequência](https://raw.githubusercontent.com/pnakibar/jadeAndROSIntegration/master/diagramas/Diagram%20de%20Sequ%C3%AAncia.png)
 Como podemos perceber, a mensagem começa no Agente Piloto e vai até chegar ao ROS.
 
-Diagrama de classes:
+###Diagrama de classes:
 ![Diagrama de classes](https://raw.githubusercontent.com/pnakibar/jadeAndROSIntegration/master/diagramas/Diagrama%20de%20classes.png)
 Todas os agentes herdam da classe Agent do Jade e a classe Tartaruga usa os metódos do pacote jrosbridge.
 
-Diagrama de implantação:
+###Diagrama de implantação:
 ![Diagrama de implantação](https://raw.githubusercontent.com/pnakibar/jadeAndROSIntegration/master/diagramas/Diagrama%20implanta%C3%A7%C3%A3o.png)
 Os nós do sistemas precisam ambos ter o Jade instalado, para criação e movimentação de agentes.
 
-Diagrama de atividade:
+###Diagrama de atividade:
 ![Diagrama de atividade](https://raw.githubusercontent.com/pnakibar/jadeAndROSIntegration/master/diagramas/Vida%20de%20um%20Agente.png)
 Diagrama de atividades exemplificando a vida de um agente no sistema. Do momento em que é criado até o momento em que ele termina de fazer seus deveres e é "morto" pelo ambiente.
 
