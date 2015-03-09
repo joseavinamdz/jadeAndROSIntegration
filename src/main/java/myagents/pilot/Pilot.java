@@ -36,7 +36,8 @@ public class Pilot extends Agent {
 			//fim do conteudo da mensagem -> dois vetores
 			
 			try {
-				message.setContentObject(vectors); //insere o conteúdo na mensagem
+				//serializa o conteúdo na mensagem
+				message.setContentObject(vectors); 
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
