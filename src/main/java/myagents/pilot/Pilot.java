@@ -12,34 +12,36 @@ import jade.lang.acl.ACLMessage;
 public class Pilot extends Agent {
 	private static final long serialVersionUID = 1L;
 	
-	
 	protected void setup(){
 		System.out.println("Hello, "+getAID().getName()+" is ready");
 		addBehaviour(new IssueCommandToTurtle());
 	}
 	
 	
-	
+	/*Behaviour para enviar comando para a tartaruga*/
 	private class IssueCommandToTurtle extends OneShotBehaviour{
 
 		private static final long serialVersionUID = 5328804229040293382L;
 
 		@Override
 		public void action() {
-			AID turtle1 = new AID("turtle1", AID.ISLOCALNAME);
-			ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
-			message.addReceiver(turtle1);
+			AID turtle1 = new AID("turtle1", AID.ISLOCALNAME); //nome da instância do agente dentro do JADE
+			ACLMessage message = new ACLMessage(ACLMessage.REQUEST); //mensagem do tipo REQUEST
+			message.addReceiver(turtle1); //adiciona recipiente da mensagem
+			
+			//inicio do conteudo da mensagem
 			Float[] linear = {(float) 2.0,(float) 2.0,(float) 0.0};
 			Float[] angular = {(float) 0,(float) 0,(float) 0};
 			Float[][] vectors = {linear, angular};
+			//fim do conteudo da mensagem -> dois vetores
 			
 			try {
-				message.setContentObject(vectors);
+				message.setContentObject(vectors); //insere o conteúdo na mensagem
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			myAgent.send(message);
-			doDelete();
+			myAgent.send(message); //envia a mensagem para os recipiente
+			doDelete(); //marca o agente como "finalizado"
 			
 		}
 		
