@@ -16,7 +16,7 @@ rosrun turtlesim turtlesim_node
 #Material e documentação
 - [Tutorial de como montar o projeto](http://pt.slideshare.net/pedronakibar/tutorial-setup-projeto-jade-e-ros)
 - [Survey: Integração de sistemas robóticos com programação orientada a agentes](http://www.slideshare.net/pedronakibar/survey-integrao-de-sistemas-robticos-com-programao-orientada-a-agentes)
-- Slides de apoio ao survey
+- [Slides de apoio ao survey](http://pt.slideshare.net/pedronakibar/apresentao-integrao-ros-e-jade)
  
 
 
