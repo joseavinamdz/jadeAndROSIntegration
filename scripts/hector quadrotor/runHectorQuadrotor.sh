@@ -1,1 +1,1 @@
-ros launch hector_quadrotor_demo outdoor_flight_gazebo.launch
+roslaunch hector_quadrotor_demo outdoor_flight_gazebo.launch
