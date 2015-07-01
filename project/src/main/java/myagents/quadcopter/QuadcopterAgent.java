@@ -1,4 +1,4 @@
-package myagents.turtle;
+package myagents.quadcopter;
 import edu.wpi.rail.jrosbridge.Ros;
 import edu.wpi.rail.jrosbridge.Topic;
 import edu.wpi.rail.jrosbridge.callback.TopicCallback;
@@ -14,30 +14,30 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
-public class TurtleAgent extends Agent{
+public class QuadcopterAgent extends Agent{
 	private static final long serialVersionUID = 1L;
 	
 	private Ros ros;
-	private Topic turtleTopic;
+	private Topic quadTopic;
 	
 	
 	
-	public TurtleAgent(){
+	public QuadcopterAgent(){
 		//inicia o ROS com suas configurações
 		ros = new Ros("localhost"); //localização do ROS
 	    	ros.connect(); //conecta ao ROS
-	    	turtleTopic = new Topic(ros, "/turtle1/cmd_vel", "geometry_msgs/Twist"); //define o topico, com o tipo de mensagem e o recipiente
-	    	turtleTopic.subscribe(new TopicCallback() { //assina o tópico e define uma função para ser executada quando for respondidade
-			public void handleMessage(Message arg0) {
-				//do nothing
-			}
-		});
+	    	quadTopic = new Topic(ros, "/cmd_vel", "geometry_msgs/Twist"); //define o topico, com o tipo de mensagem e o recipiente
+	    	quadTopic.subscribe(new TopicCallback() { //assina o tópico e define uma função para ser executada quando for respondidade
+	    		public void handleMessage(Message arg0) {
+	    			//do nothing
+	    		}
+	    	});
 	
 	}
 	
-	private void moveTurtle(Vector3 linear, Vector3 angular){ //envia a mensagem para o ROS
+	private void moveQuad(Vector3 linear, Vector3 angular){ //envia a mensagem para o ROS
 		Message toSend = new Twist(linear, angular);
-	    turtleTopic.publish(toSend);
+	    quadTopic.publish(toSend);
 	    try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
@@ -45,10 +45,10 @@ public class TurtleAgent extends Agent{
 			e.printStackTrace();
 		}
 	}
-	private void moveTurtle(Float[] linear, Float[] angular){ //envia a mensagem para o ROS
+	private void moveQuad(Float[] linear, Float[] angular){ //envia a mensagem para o ROS
 		Vector3 linearVector = new Vector3(linear[0],linear[1],linear[2]);
 		Vector3 angularVector = new Vector3(angular[0],angular[1],angular[2]);
-		this.moveTurtle(linearVector, angularVector);
+		this.moveQuad(linearVector, angularVector);
 		
 	}
 	
@@ -69,9 +69,10 @@ public class TurtleAgent extends Agent{
 					//deserializa o conteúdo da mensagem
 					Float[][] content = (Float[][]) msg.getContentObject(); 
 					//chama o metódo de enviar mensagem para o ROS
-					moveTurtle(new Vector3(content[0][0],content[0][1],content[0][2]), new Vector3(content[1][0],content[1][1],content[1][2]));
+					System.out.println("Recebi! "+content.toString());
+					moveQuad(new Vector3(content[0][0],content[0][1],content[0][2]), new Vector3(content[1][0],content[1][1],content[1][2]));
 				} catch (UnreadableException e) {
-					System.out.println(getAID().getName()+" Mensagem invalida.");
+					e.printStackTrace();
 				}
 			}
 			else{
