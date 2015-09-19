@@ -1,4 +1,4 @@
-package myagents.pilot;
+package myagents.tutorial;
 
 import java.io.IOException;
 
