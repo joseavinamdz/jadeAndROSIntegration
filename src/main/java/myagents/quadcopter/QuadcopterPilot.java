@@ -6,6 +6,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
+import myagents.quadcopter.gpsutils.GPSPosition;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -15,18 +16,23 @@ public class QuadcopterPilot extends Agent {
     private static final long serialVersionUID = 1L;
 
     protected void setup(){
-        System.out.println("Hello, "+getAID().getName()+" is ready");
+        System.out.println("Hello, " + getAID().getName() + " is ready");
+
         addBehaviour(IssueCommandToQuad.subir());
+        System.out.println("enviei subir!");
         wait(60000);
         addBehaviour(IssueCommandToQuad.parar());
-        addBehaviour(IssueCommandToQuad.frente());
-        wait(120000);
+        System.out.println("enviei parar!");
+
+        GPSPosition g = new GPSPosition(1,2,3);
+        addBehaviour(new IssueGPSToQuad(g));
 
         //doDelete(); //marca como finalizado
     }
 
 
-    private void wait(int ms){
+
+    private boolean wait(int ms){
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
 
@@ -36,18 +42,9 @@ public class QuadcopterPilot extends Agent {
 
             }
         }, ms);
-    }
-    public Twist frente(){
-        Vector3 linear = new Vector3(2.0, 0, 0);
-        Vector3 angular = new Vector3(0, 0, 0);
-        return new Twist(linear, angular);
+        return true;
     }
 
-    public Twist parar(){
-        Vector3 linear = new Vector3(0, 0, 0);
-        Vector3 angular = new Vector3(0, 0, 0);
-        return new Twist(linear, angular);
-    }
 
 
 
@@ -81,7 +78,6 @@ public class QuadcopterPilot extends Agent {
         }
 
 
-
         public void action() {
             AID quad1 = new AID("quad1", AID.ISLOCALNAME); //nome da instância do agente dentro do JADE
             ACLMessage message = new ACLMessage(ACLMessage.REQUEST); //mensagem do tipo REQUEST
@@ -96,6 +92,32 @@ public class QuadcopterPilot extends Agent {
             try {
                 //serializa o conteúdo na mensagem
                 message.setContentObject(vectors);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            myAgent.send(message); //envia a mensagem para os recipiente
+        }
+
+    }
+
+    private static class IssueGPSToQuad extends OneShotBehaviour {
+        private static final long serialVersionUID = 5328804229040293382L;
+        private GPSPosition gpsPosition;
+
+        public IssueGPSToQuad(GPSPosition gpsPosition){
+            this.gpsPosition = gpsPosition;
+        }
+
+
+        public void action() {
+            AID quad1 = new AID("quad1", AID.ISLOCALNAME); //nome da instância do agente dentro do JADE
+            ACLMessage message = new ACLMessage(ACLMessage.REQUEST); //mensagem do tipo REQUEST
+            message.addReceiver(quad1); //adiciona recipiente da mensagem
+
+
+            try {
+                //serializa o conteúdo na mensagem
+                message.setContentObject(gpsPosition);
             } catch (IOException e) {
                 e.printStackTrace();
             }

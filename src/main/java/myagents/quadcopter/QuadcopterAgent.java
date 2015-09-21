@@ -13,6 +13,8 @@ import jade.domain.RequestFIPAServiceBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
+import myagents.quadcopter.gpsutils.GPSPosition;
+import myagents.quadcopter.gpsutils.GPSUtils;
 
 public class QuadcopterAgent extends Agent{
     private static final long serialVersionUID = 1L;
@@ -30,7 +32,7 @@ public class QuadcopterAgent extends Agent{
         quadTopic.subscribe(new TopicCallback() { //assina o tópico e define uma função para ser executada quando for respondidade
             public void handleMessage(Message arg0) {
                 //do nothing
-                System.out.println("Mensagem recebida: "+arg0);
+                System.out.println("Mensagem recebida: " + arg0);
             }
         });
 
@@ -66,12 +68,26 @@ public class QuadcopterAgent extends Agent{
         public void action() {
             MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);//apenas recebe mensagens do tipo REQUEST
             ACLMessage msg = myAgent.receive(mt); //recebe a mensagem, remove da pilha
+
             if (msg != null){
                 try {
-                    //deserializa o conteúdo da mensagem
-                    Float[][] content = (Float[][]) msg.getContentObject();
-                    //chama o metódo de enviar mensagem para o ROS
-                    moveQuad(new Vector3(content[0][0],content[0][1],content[0][2]), new Vector3(content[1][0],content[1][1],content[1][2]));
+
+                    if (msg.getContentObject().getClass() == GPSPosition.class){
+                        //GPSUtils.generateWay((GPSPosition) msg.getContentObject(), getMyGPSPosition());
+                        GPSPosition gp = (GPSPosition) msg.getContentObject();
+                        System.out.println(gp);
+                        System.out.println("recebi um GPSPostion!");
+                    }
+                    else {
+                        //deserializa o conteúdo da mensagem
+                        System.out.println("recebi um array de float");
+                        Float[][] content = (Float[][]) msg.getContentObject();
+
+                        //chama o metódo de enviar mensagem para o ROS
+                        moveQuad(new Vector3(content[0][0], content[0][1], content[0][2]), new Vector3(content[1][0], content[1][1], content[1][2]));
+                    }
+
+
                 } catch (UnreadableException e) {
                     e.printStackTrace();
                 }
@@ -81,6 +97,21 @@ public class QuadcopterAgent extends Agent{
             }
         }
 
+    }
+
+    private void getMyGPSPosition() {
+        final Message[] m = new Message[1];
+        Topic gpsTopic = new Topic(ros, "/fix", "std_msgs/String");
+
+        gpsTopic.subscribe(new TopicCallback() {
+            public void handleMessage(Message message) {
+                System.out.println(message);
+                m[0] = message;
+            }
+        });
+        gpsTopic.unsubscribe();
+
+        System.out.println(m[0]);
     }
 
 
