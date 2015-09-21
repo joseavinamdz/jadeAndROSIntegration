@@ -17,14 +17,30 @@ public class QuadcopterPilot extends Agent {
 
     protected void setup(){
         System.out.println("Hello, " + getAID().getName() + " is ready");
-
+        /*
         addBehaviour(IssueCommandToQuad.subir());
         System.out.println("enviei subir!");
         wait(60000);
         addBehaviour(IssueCommandToQuad.parar());
         System.out.println("enviei parar!");
+        */
 
-        GPSPosition g = new GPSPosition(1,2,3);
+        //GPSPosition g = new GPSPosition(Double.NaN, Double.NaN, 10);
+        //Object[] args = getArguments();
+
+        String[] args = ((String) getArguments()[0]).split(" ");
+        double[] s = new double[3];
+
+        for (int i=0; i < args.length; i++){
+            if ((args[i]).toLowerCase().compareTo("nan") == 0)
+                s[i] = Double.NaN;
+            else
+                s[i] = Double.parseDouble(args[i]);
+        }
+
+
+        GPSPosition g = new GPSPosition(s[0], s[1], s[2]);
+        System.out.println(g);
         addBehaviour(new IssueGPSToQuad(g));
 
         //doDelete(); //marca como finalizado

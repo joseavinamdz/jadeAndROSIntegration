@@ -9,12 +9,15 @@ import jade.content.schema.facets.RegexFacet;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.core.messaging.TopicUtility;
 import jade.domain.RequestFIPAServiceBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 import myagents.quadcopter.gpsutils.GPSPosition;
 import myagents.quadcopter.gpsutils.GPSUtils;
+
+import javax.json.JsonObject;
 
 public class QuadcopterAgent extends Agent{
     private static final long serialVersionUID = 1L;
@@ -23,6 +26,8 @@ public class QuadcopterAgent extends Agent{
     private Topic quadTopic;
 
 
+    private TopicCallback gpsTopicCallback;
+    private Message gpsMessage;
 
     public QuadcopterAgent(){
         //inicia o ROS com suas configurações
@@ -36,6 +41,16 @@ public class QuadcopterAgent extends Agent{
             }
         });
 
+        Topic gpsTopic = new Topic(ros, "fix", "sensor_msgs/NavSatFix");
+        gpsTopicCallback = new TopicCallback() {
+            public void handleMessage(Message message) {
+                //System.out.println(message);
+                gpsMessage = message;
+                //System.out.println(gpsMessage);
+            }
+        };
+
+        gpsTopic.subscribe(gpsTopicCallback);
     }
 
     private void moveQuad(Vector3 linear, Vector3 angular){ //envia a mensagem para o ROS
@@ -73,10 +88,15 @@ public class QuadcopterAgent extends Agent{
                 try {
 
                     if (msg.getContentObject().getClass() == GPSPosition.class){
-                        //GPSUtils.generateWay((GPSPosition) msg.getContentObject(), getMyGPSPosition());
-                        GPSPosition gp = (GPSPosition) msg.getContentObject();
-                        System.out.println(gp);
-                        System.out.println("recebi um GPSPostion!");
+
+                        GPSPosition objective = (GPSPosition) msg.getContentObject();
+                        Vector3 way = GPSUtils.generateWay(getMyGPSPosition(), objective);
+
+                        Vector3 zero = new Vector3(0,0,0);
+
+                        moveQuad(way, zero);
+                        checkPosition(objective);
+                        moveQuad(zero, zero); //stop
                     }
                     else {
                         //deserializa o conteúdo da mensagem
@@ -99,20 +119,33 @@ public class QuadcopterAgent extends Agent{
 
     }
 
-    private void getMyGPSPosition() {
-        final Message[] m = new Message[1];
-        Topic gpsTopic = new Topic(ros, "/fix", "std_msgs/String");
+    private void checkPosition(GPSPosition objective) {
+        System.out.println("check position!");
+        int latComp;
+        int altComp;
+        int lonComp;
 
-        gpsTopic.subscribe(new TopicCallback() {
-            public void handleMessage(Message message) {
-                System.out.println(message);
-                m[0] = message;
-            }
-        });
-        gpsTopic.unsubscribe();
+        do {
+            GPSPosition actual = getMyGPSPosition();
+            latComp = Double.compare(objective.getLatitude(), actual.getLatitude());
+            altComp = Double.compare(objective.getAltitude(), actual.getAltitude());
+            lonComp = Double.compare(objective.getLongitude(), actual.getLongitude());
 
-        System.out.println(m[0]);
+        } while (latComp >= 0 && altComp >= 0 && lonComp >= 0);
+        System.out.println("chegou!");
     }
+
+    private GPSPosition getMyGPSPosition() {
+        JsonObject now = gpsMessage.toJsonObject();
+
+        Double latitude = Double.parseDouble(now.get("latitude").toString());
+        Double altitude = Double.parseDouble(now.get("altitude").toString());
+        Double longitude = Double.parseDouble(now.get("longitude").toString());
+
+        return new GPSPosition(latitude, longitude, altitude);
+    }
+
+
 
 
 }

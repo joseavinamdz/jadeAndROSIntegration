@@ -6,9 +6,9 @@ import java.io.Serializable;
  * Created by pmn on 9/20/15.
  */
 public class GPSPosition implements Serializable{
-    private double latitude;
-    private double longitude;
-    private double altitude;
+    private Double latitude;
+    private Double longitude;
+    private Double altitude;
 
     public GPSPosition(double latitude, double longitude, double altitude) {
         this.latitude = latitude;
@@ -16,27 +16,28 @@ public class GPSPosition implements Serializable{
         this.altitude = altitude;
     }
 
-    public double getLatitude() {
+
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(double latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(double longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
-    public double getAltitude() {
+    public Double getAltitude() {
         return altitude;
     }
 
-    public void setAltitude(double altitude) {
+    public void setAltitude(Double altitude) {
         this.altitude = altitude;
     }
 
